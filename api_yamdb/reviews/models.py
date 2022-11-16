@@ -45,6 +45,10 @@ class User(AbstractUser):
         default='user',
         blank=True
     )
+    confirmation_code = models.CharField(
+        'Код подтверждения',
+        blank=False
+    )
 
     class Meta:
         ordering = ('id',)
