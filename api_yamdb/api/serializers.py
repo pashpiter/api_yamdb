@@ -7,10 +7,6 @@ class ReviewSerializer(serializers.ModelSerializer):
     author = serializers.SlugRelatedField(
         read_only=True, slug_field='username'
     )
-    title = serializers.SlugRelatedField(
-        slug_field='name',
-        read_only=True,
-    )
 
     class Meta:
         fields = ("id", "text", "author", "score", "pub_date")
@@ -23,6 +19,11 @@ class ReviewSerializer(serializers.ModelSerializer):
             if Review.objects.filter(author=user, title_id=title_id).exists():
                 raise serializers.ValidationError('Ваш отзыв уже существует.')
         return data
+
+    def validate_score(self, value):
+        if 1 <= value <= 10:
+            return value
+        raise serializers.ValidationError('Оценка - целое число от 1 до 10.')
 
 
 class CommentSerializer(serializers.ModelSerializer):

@@ -5,7 +5,7 @@ from .models import Comment, Review, User
 
 class ReviewAdmin(admin.ModelAdmin):
     list_display = ('pk', 'title', 'author', 'text', 'score', 'pub_date')
-    search_fields = ('pk', 'title', 'author', 'pub_date',)
+    search_fields = ( 'title', 'author','score', 'pub_date',)
     list_filter = ('pub_date','score')
     empty_value_display = '-пусто-'
 
