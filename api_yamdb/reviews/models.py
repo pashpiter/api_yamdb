@@ -3,7 +3,6 @@ from django.contrib.auth.validators import UnicodeUsernameValidator
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
 
-
 from .validators import validate_title_year
 
 CHOICES_ROLE = (
@@ -123,6 +122,9 @@ class Title(models.Model):
         verbose_name = 'Произведение'
         verbose_name_plural = 'Произведения'
 
+    @property
+    def rating(self):
+        return self.reviews.objects.aggregate(models.Avg('score'))
     def __str__(self):
         return f'{self.name}'
 
