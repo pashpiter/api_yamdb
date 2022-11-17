@@ -4,6 +4,7 @@ from rest_framework.exceptions import ValidationError
 from rest_framework.response import Response
 from rest_framework.status import HTTP_200_OK, HTTP_400_BAD_REQUEST
 from rest_framework.views import APIView
+from rest_framework.viewsets import ModelViewSet
 
 from reviews.models import User
 from .serializers import SignupSerializer, GetTokenSerializer
@@ -40,6 +41,8 @@ class APISignup(APIView):
 
 
 class APIGetToken(APIView):
+    permission_classes = (permissions.AllowAny,)
+
     def post(self, request):
         serializer = GetTokenSerializer(data=request.data)
         if not serializer.is_valid():
@@ -50,3 +53,6 @@ class APIGetToken(APIView):
         if confirmation_code != user.confirmation_code:
             return Response(serializer.errors, status=HTTP_400_BAD_REQUEST)
         return Response({"token": create_jwt_token(user)})
+
+
+class UserViewSet(ModelViewSet):
