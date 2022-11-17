@@ -3,13 +3,16 @@ from django.contrib.auth.validators import UnicodeUsernameValidator
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
 
-
 from .validators import validate_title_year
 
+USER_ROLE = 'user'
+MODERATOR_ROLE = 'moderator'
+ADMIN_ROLE = 'admin'
+
 CHOICES_ROLE = (
-    ('user', 'user'),
-    ('moderator', 'moderator'),
-    ('admin', 'admin')
+    (USER_ROLE, 'user'),
+    (MODERATOR_ROLE, 'moderator'),
+    (ADMIN_ROLE, 'admin')
 )
 
 
@@ -42,7 +45,7 @@ class User(AbstractUser):
         'Роль',
         max_length=16,
         choices=CHOICES_ROLE,
-        default='user',
+        default=USER_ROLE,
         blank=True
     )
     confirmation_code = models.CharField(
