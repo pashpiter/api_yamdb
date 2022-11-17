@@ -2,6 +2,7 @@ from django.contrib.auth.models import AbstractUser
 from django.contrib.auth.validators import UnicodeUsernameValidator
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
+from django.db.models import Avg
 
 
 from .validators import validate_title_year
@@ -122,6 +123,10 @@ class Title(models.Model):
     class Meta:
         verbose_name = 'Произведение'
         verbose_name_plural = 'Произведения'
+
+    @property
+    def rating(self):
+        return self.reviews.aggregate(Avg('score')).get('score__avg', 0.00)
 
     def __str__(self):
         return f'{self.name}'
