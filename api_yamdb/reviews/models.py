@@ -133,6 +133,7 @@ class Title(models.Model):
     @property
     def rating(self):
         return self.reviews.objects.aggregate(models.Avg('score'))
+    
     def __str__(self):
         return f'{self.name}'
 
