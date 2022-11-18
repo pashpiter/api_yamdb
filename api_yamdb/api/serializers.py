@@ -1,4 +1,7 @@
-from rest_framework import serializers
+import datetime
+
+from rest_framework import serializers, models
+from django.core.exceptions import ValidationError
 
 from reviews.models import Comment, Review, Category, Genre, Title
 
@@ -52,12 +55,24 @@ class GenreSerializer(serializers.ModelSerializer):
 
 class TitleSerializer(serializers.ModelSerializer):
     category = serializers.SlugRelatedField(
-        slug_field='category', queryset=Category.objects.all(), many=True
+        slug_field='category', queryset=Category.objects.all()
     )
     genre = serializers.SlugRelatedField(
         slug_field='genre', queryset=Genre.objects.all(), many=True
     )
+    # rating = serializers.DecimalField(2, max_value=10, min_value=1)
+    rating = serializers.SerializerMethodField()
 
     class Meta:
         fields = '__all__'
         model = Title
+
+    def validate_year(self, value):
+        current_year = datetime.datetime.now().year
+        if value > current_year:
+            raise ValidationError(
+                'Произведение не может иметь год позже текущего'
+        )
+
+    def get_rating(self, obj):
+        return obj.reviews.aggregate(models.Avg('score'))
