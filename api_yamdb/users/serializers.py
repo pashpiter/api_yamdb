@@ -27,8 +27,8 @@ class SignupSerializer(serializers.ModelSerializer):
     def validate_email(self, value):
         if User.objects.filter(email=value).exists():
             raise serializers.ValidationError(
-                (f'Данный email ({value}) уже существует в базе данных. '
-                 'Выберите другой')
+                (f'Пользователь с email ({value}) уже существует. '
+                 f'Если {value} Ваш, обратитесь к Администратору.')
             )
         return value
 
