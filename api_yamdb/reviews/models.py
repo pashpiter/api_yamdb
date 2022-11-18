@@ -50,6 +50,7 @@ class User(AbstractUser):
     )
     confirmation_code = models.CharField(
         'Код подтверждения',
+        max_length=5,
         blank=False
     )
 
@@ -103,6 +104,7 @@ class Genre(models.Model):
 class Title(models.Model):
     name = models.CharField(
         'Название произведения',
+        max_length=200
     )
     year = models.IntegerField(
         'Год выпуска',
@@ -117,7 +119,9 @@ class Title(models.Model):
         Category,
         on_delete=models.SET_NULL,
         verbose_name='Категория',
-        related_name='titles'
+        related_name='titles',
+        null=True,
+        blank=True
     )
     genre = models.ManyToManyField(
         Genre,
