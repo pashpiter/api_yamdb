@@ -46,12 +46,14 @@ class User(AbstractUser):
         max_length=16,
         choices=CHOICES_ROLE,
         default=USER_ROLE,
-        blank=True
+        blank=True,
+        null=True
     )
     confirmation_code = models.CharField(
         'Код подтверждения',
         max_length=5,
-        blank=False
+        blank=True,
+        null=True
     )
 
     class Meta:

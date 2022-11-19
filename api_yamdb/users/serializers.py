@@ -1,12 +1,9 @@
-from django.contrib.auth.validators import UnicodeUsernameValidator
 from rest_framework import serializers
 
-from reviews.models import User, CHOICES_ROLE
+from reviews.models import User
 
 
 class SignupSerializer(serializers.ModelSerializer):
-    email = serializers.EmailField(max_length=254, required=True)
-    username = serializers.CharField(max_length=150, required=True)
 
     class Meta:
         model = User
@@ -17,24 +14,11 @@ class SignupSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError(
                 'Использовать имя "me" в качестве username запрещено.'
             )
-        if User.objects.filter(username=value).exists():
-            raise serializers.ValidationError(
-                (f'Данный username ({value}) уже существует в базе данных. '
-                 'Выберите другой')
-            )
-        return value
-
-    def validate_email(self, value):
-        if User.objects.filter(email=value).exists():
-            raise serializers.ValidationError(
-                (f'Пользователь с email ({value}) уже существует. '
-                 f'Если {value} Ваш, обратитесь к Администратору.')
-            )
         return value
 
 
 class GetTokenSerializer(serializers.ModelSerializer):
-    username = serializers.CharField(max_length=150, required=True)
+    username = serializers.CharField(required=True)
     confirmation_code = serializers.CharField(required=True)
 
     class Meta:
@@ -43,15 +27,6 @@ class GetTokenSerializer(serializers.ModelSerializer):
 
 
 class UserSerializer(serializers.ModelSerializer):
-    username = serializers.CharField(
-        max_length=150,
-        required=True,
-        validators=(UnicodeUsernameValidator,)
-    )
-    email = serializers.EmailField(max_length=254, required=True)
-    role = serializers.ChoiceField(choices=CHOICES_ROLE)
-    first_name = serializers.CharField(max_length=150)
-    last_name = serializers.CharField(max_length=150)
 
     class Meta:
         model = User
@@ -62,22 +37,6 @@ class UserSerializer(serializers.ModelSerializer):
                   'bio',
                   'role'
                   )
-
-    def validate_username(self, value):
-        if User.objects.filter(username=value).exists():
-            raise serializers.ValidationError(
-                (f'Данный username ({value}) уже существует в базе данных. '
-                 'Выберите другой')
-            )
-        return value
-
-    def validate_email(self, value):
-        if User.objects.filter(email=value).exists():
-            raise serializers.ValidationError(
-                (f'Данный email ({value}) уже существует в базе данных. '
-                 'Выберите другой')
-            )
-        return value
 
 
 class MeUserSerializer(UserSerializer):

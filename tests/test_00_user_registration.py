@@ -6,8 +6,8 @@ User = get_user_model()
 
 
 class Test00UserRegistration:
-    url_signup = '/api/v1/users/signup/'
-    url_token = '/api/v1/users/token/'
+    url_signup = '/api/v1/auth/signup/'
+    url_token = '/api/v1/auth/token/'
     url_admin_create_user = '/api/v1/users/'
 
     @pytest.mark.django_db(transaction=True)
