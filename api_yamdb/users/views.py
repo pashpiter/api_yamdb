@@ -1,12 +1,14 @@
 from django.shortcuts import get_object_or_404
 from rest_framework.decorators import action
 from rest_framework.exceptions import ValidationError
-from rest_framework.permissions import IsAuthenticated, AllowAny
+from rest_framework.filters import SearchFilter
+from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.status import HTTP_200_OK, HTTP_400_BAD_REQUEST
 from rest_framework.views import APIView
 from rest_framework.viewsets import ModelViewSet
 
+from api.permissions import IsAdmin
 from reviews.models import User
 from .serializers import (
     SignupSerializer,
@@ -22,8 +24,6 @@ from .utils import (
 
 
 class APISignup(APIView):
-    permission_classes = (AllowAny,)
-
     def post(self, request):
         serializer = SignupSerializer(data=request.data)
         if not serializer.is_valid():
@@ -47,8 +47,6 @@ class APISignup(APIView):
 
 
 class APIGetToken(APIView):
-    permission_classes = (AllowAny,)
-
     def post(self, request):
         serializer = GetTokenSerializer(data=request.data)
         if not serializer.is_valid():
@@ -64,23 +62,40 @@ class APIGetToken(APIView):
 class UserViewSet(ModelViewSet):
     queryset = User.objects.all()
     serializer_class = UserSerializer
+    permission_classes = (IsAdmin,)
+    filter_backends = (SearchFilter,)
+    search_fields = ('username',)
+    lookup_field = 'username'
+
+    def perform_create(self, serializer):
+        if 'role' not in self.request.data:
+            serializer.save(role='user')
+        serializer.save()
 
     @action(
         methods=['get', 'patch'],
-        detail=True,
+        detail=False,
         url_path='me',
-        permisson_classes=(IsAuthenticated,)
+        permission_classes=(IsAuthenticated,),
     )
     def get_or_update_yourself(self, request):
         user = get_object_or_404(User, username=self.request.user)
-        serializer = MeUserSerializer(user)
+        serializer = UserSerializer(user)
         if request.method == 'PATCH':
-            serializer = MeUserSerializer(
-                user,
-                data=request.data,
-                partial=True
-            )
+            if request.user.role == 'admin':
+                serializer = UserSerializer(
+                    user,
+                    data=request.data,
+                    partial=True
+                )
+            else:
+                serializer = MeUserSerializer(
+                    user,
+                    data=request.data,
+                    partial=True
+                )
             if not serializer.is_valid():
                 return Response(serializer.errors, status=HTTP_400_BAD_REQUEST)
             serializer.save()
-        return Response(serializer.data, status=HTTP_200_OK)
+            return Response(serializer.data, status=HTTP_200_OK)
+        return Response(serializer.data)
