@@ -1,7 +1,7 @@
 from django.shortcuts import get_object_or_404
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import pagination, viewsets, filters
-
+from django.db.models import Avg
 from reviews.models import Genre, Category, Title, Review
 from .permissions import (IsAdminOrReadOnly,
                           IsAuthorOrModeratorOrAdminOrReadOnly)
@@ -28,12 +28,13 @@ class GenreViewSet(viewsets.ModelViewSet):
 
 
 class TitleViewSet(viewsets.ModelViewSet):
-    queryset = Title.objects.all()
+    queriset = Title.objects.annotate(raiting=Avg('reviews_score')).all()
     serializer_class = TitleSerializer
     permission_classes = [IsAdminOrReadOnly]
     pagination_class = pagination.PageNumberPagination
     filter_backends = (DjangoFilterBackend,)
     filterset_fields = ('category__slug', 'genre_slug', 'name', 'year')
+
 
 
 class ReviewViewSet(viewsets.ModelViewSet):

@@ -40,7 +40,7 @@ class CommentSerializer(serializers.ModelSerializer):
 
 
 class CategorySerializer(serializers.ModelSerializer):
-    
+
     class Meta:
         fields = '__all__'
         model = Category
@@ -60,8 +60,7 @@ class TitleSerializer(serializers.ModelSerializer):
     genre = serializers.SlugRelatedField(
         slug_field='genre', queryset=Genre.objects.all(), many=True
     )
-    # rating = serializers.DecimalField(2, max_value=10, min_value=1)
-    rating = serializers.SerializerMethodField()
+    rating = serializers.IntegerField()
 
     class Meta:
         fields = '__all__'
