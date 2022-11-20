@@ -35,21 +35,19 @@ class CommentSerializer(serializers.ModelSerializer):
     )
 
     class Meta:
-        fields = ('id', 'text', 'author', 'pub_date' )
+        fields = ('id', 'text', 'author', 'pub_date')
         model = Comment
 
 
 class CategorySerializer(serializers.ModelSerializer):
-    
     class Meta:
-        fields = '__all__'
+        fields = ('name', 'slug',)
         model = Category
 
 
 class GenreSerializer(serializers.ModelSerializer):
-
     class Meta:
-        fields = '__all__'
+        fields = ('name', 'slug',)
         model = Genre
 
 
@@ -60,7 +58,6 @@ class TitleSerializer(serializers.ModelSerializer):
     genre = serializers.SlugRelatedField(
         slug_field='genre', queryset=Genre.objects.all(), many=True
     )
-    # rating = serializers.DecimalField(2, max_value=10, min_value=1)
     rating = serializers.SerializerMethodField()
 
     class Meta:
@@ -72,7 +69,5 @@ class TitleSerializer(serializers.ModelSerializer):
         if value > current_year:
             raise ValidationError(
                 'Произведение не может иметь год позже текущего'
-        )
-
-    def get_rating(self, obj):
-        return obj.reviews.aggregate(models.Avg('score'))
+            )
+        return value
