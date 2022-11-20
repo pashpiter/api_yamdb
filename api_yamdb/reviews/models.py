@@ -210,3 +210,17 @@ class Comment(models.Model):
 
     def __str__(self):
         return self.text
+
+class GenreTitle(models.Model):
+    genre = models.ForeignKey(
+        Genre,
+        on_delete=models.CASCADE
+    )
+    title = models.ForeignKey(
+        Title,
+        on_delete=models.CASCADE
+    )
+
+    class Meta:
+        verbose_name = "Жанр, произведение"
+        verbose_name_plural = "Жанры, произведения"
