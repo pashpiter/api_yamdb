@@ -6,7 +6,8 @@ from reviews.models import Genre, Category, Title, Review
 from .permissions import (IsAdminOrReadOnly,
                           IsAuthorOrModeratorOrAdminOrReadOnly)
 from .serializers import (CategorySerializer, GenreSerializer, TitleSerializer,
-                          CommentSerializer, ReviewSerializer)
+                          CommentSerializer, ReviewSerializer,
+                          TitleListSerializer)
 
 
 class CategoryViewSet(viewsets.ModelViewSet):
@@ -33,7 +34,12 @@ class TitleViewSet(viewsets.ModelViewSet):
     permission_classes = [IsAdminOrReadOnly]
     pagination_class = pagination.PageNumberPagination
     filter_backends = (DjangoFilterBackend,)
-    filterset_fields = ('category__slug', 'genre_slug', 'name', 'year')
+    filterset_fields = ('category__slug', 'genre__slug', 'name', 'year')
+
+    def get_serializer_class(self):
+        if self.action != 'list':
+            return TitleSerializer
+        TitleListSerializer
 
 
 class ReviewViewSet(viewsets.ModelViewSet):
