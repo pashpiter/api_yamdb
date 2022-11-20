@@ -3,6 +3,7 @@ import datetime
 from django.db.models import Avg
 from rest_framework import serializers
 from django.core.exceptions import ValidationError
+from django.db.models import Avg
 
 from reviews.models import Comment, Review, Category, Genre, Title
 
@@ -90,3 +91,4 @@ class TitleListSerializer(serializers.ModelSerializer):
 
     def get_rating(self, obj):
         return obj.title.objects.aggregate(raiting=Avg('reviews_score')).all()
+
