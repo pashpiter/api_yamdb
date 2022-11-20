@@ -46,11 +46,14 @@ class User(AbstractUser):
         max_length=16,
         choices=CHOICES_ROLE,
         default=USER_ROLE,
-        blank=True
+        blank=True,
+        null=True
     )
     confirmation_code = models.CharField(
         'Код подтверждения',
-        blank=False
+        max_length=5,
+        blank=True,
+        null=True
     )
 
     class Meta:
@@ -103,6 +106,7 @@ class Genre(models.Model):
 class Title(models.Model):
     name = models.CharField(
         'Название произведения',
+        max_length=200
     )
     year = models.IntegerField(
         'Год выпуска',
@@ -117,7 +121,9 @@ class Title(models.Model):
         Category,
         on_delete=models.SET_NULL,
         verbose_name='Категория',
-        related_name='titles'
+        related_name='titles',
+        null=True,
+        blank=True
     )
     genre = models.ManyToManyField(
         Genre,
@@ -130,11 +136,6 @@ class Title(models.Model):
         verbose_name = 'Произведение'
         verbose_name_plural = 'Произведения'
 
-    # @property
-    # def rating(self):
-    #     return self.reviews.objects.aggregate(models.Avg('score'))
-
-    
     def __str__(self):
         return f'{self.name}'
 
