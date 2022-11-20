@@ -1,5 +1,6 @@
 import datetime
 
+from django.db.models import Avg
 from rest_framework import serializers
 from django.core.exceptions import ValidationError
 from django.db.models import Avg
@@ -36,21 +37,19 @@ class CommentSerializer(serializers.ModelSerializer):
     )
 
     class Meta:
-        fields = ('id', 'text', 'author', 'pub_date' )
+        fields = ('id', 'text', 'author', 'pub_date')
         model = Comment
 
 
 class CategorySerializer(serializers.ModelSerializer):
-    
     class Meta:
-        fields = '__all__'
+        fields = ('name', 'slug',)
         model = Category
 
 
 class GenreSerializer(serializers.ModelSerializer):
-
     class Meta:
-        fields = '__all__'
+        fields = ('name', 'slug',)
         model = Genre
 
 
@@ -71,7 +70,7 @@ class TitleSerializer(serializers.ModelSerializer):
         if value > current_year:
             raise ValidationError(
                 'Произведение не может иметь год позже текущего'
-        )
+            )
 
 
 class TitleListSerializer(serializers.ModelSerializer):
@@ -88,7 +87,8 @@ class TitleListSerializer(serializers.ModelSerializer):
         if value > current_year:
             raise ValidationError(
                 'Произведение не может иметь год позже текущего'
-        )
+            )
 
     def get_rating(self, obj):
         return obj.title.objects.aggregate(raiting=Avg('reviews_score')).all()
+
