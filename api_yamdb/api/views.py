@@ -1,8 +1,10 @@
+from django.db.models import Avg
 from django.shortcuts import get_object_or_404
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import pagination, viewsets, filters
 
 from reviews.models import Genre, Category, Title, Review
+from .filters import TitleFilter
 from .mixins import ListCreateDestroyViewSet
 from .permissions import (IsAdminOrReadOnly,
                           IsAuthorOrModeratorOrAdminOrReadOnly)
@@ -30,17 +32,17 @@ class GenreViewSet(ListCreateDestroyViewSet):
 
 
 class TitleViewSet(viewsets.ModelViewSet):
-    queryset = Title.objects.all()
+    queryset = Title.objects.annotate(rating=Avg('reviews__score')).all()
     serializer_class = TitleSerializer
     permission_classes = [IsAdminOrReadOnly]
     pagination_class = pagination.PageNumberPagination
     filter_backends = (DjangoFilterBackend,)
-    filterset_fields = ('category__slug', 'genre__slug', 'name', 'year')
+    filterset_class = TitleFilter
 
     def get_serializer_class(self):
-        if self.action != 'list':
+        if self.action not in ['list', 'retrieve']:
             return TitleSerializer
-        TitleListSerializer
+        return TitleListSerializer
 
 
 class ReviewViewSet(viewsets.ModelViewSet):

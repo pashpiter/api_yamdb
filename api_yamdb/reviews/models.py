@@ -110,7 +110,9 @@ class Title(models.Model):
     )
     year = models.IntegerField(
         'Год выпуска',
-        validators=(validate_title_year,)
+        validators=(validate_title_year,),
+        null=True,
+        blank=True
     )
     description = models.TextField(
         'Описание произведения',
@@ -127,9 +129,9 @@ class Title(models.Model):
     )
     genre = models.ManyToManyField(
         Genre,
-        through='GenreTitle',
         verbose_name='Жанр',
-        related_name='titles'
+        related_name='titles',
+        through='GenreTitle'
     )
 
     class Meta:
@@ -141,14 +143,8 @@ class Title(models.Model):
 
 
 class GenreTitle(models.Model):
-    genre = models.ForeignKey(
-        Genre,
-        on_delete=models.CASCADE
-    )
-    title = models.ForeignKey(
-        Title,
-        on_delete=models.CASCADE
-    )
+    genre = models.ForeignKey(Genre, on_delete=models.CASCADE)
+    title = models.ForeignKey(Title, on_delete=models.CASCADE)
 
     def __str__(self):
         return f'{self.genre} - {self.title}'
