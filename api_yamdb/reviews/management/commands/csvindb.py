@@ -12,8 +12,8 @@ CSV_FILES = {
     Genre: 'genre.csv',
     Title: 'titles.csv',
     Review: 'review.csv',
-    Comment: 'comments.csv'
-    # GenreTitle: 'genre_title.csv',
+    Comment: 'comments.csv',
+    GenreTitle: 'genre_title.csv'
 }
 
 
