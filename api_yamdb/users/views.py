@@ -49,7 +49,7 @@ class APIGetToken(APIView):
         user = get_object_or_404(User, username=username)
         if confirmation_code != user.confirmation_code:
             return Response(serializer.errors, status=HTTP_400_BAD_REQUEST)
-        return Response({"token": create_jwt_token(user)})
+        return Response({'token': create_jwt_token(user)})
 
 
 class UserViewSet(ModelViewSet):
