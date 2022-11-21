@@ -1,3 +1,4 @@
+from api.permissions import IsAdmin
 from django.shortcuts import get_object_or_404
 from rest_framework.decorators import action
 from rest_framework.exceptions import ValidationError
@@ -8,19 +9,11 @@ from rest_framework.status import HTTP_200_OK, HTTP_400_BAD_REQUEST
 from rest_framework.views import APIView
 from rest_framework.viewsets import ModelViewSet
 
-from api.permissions import IsAdmin
 from reviews.models import User
-from .serializers import (
-    SignupSerializer,
-    GetTokenSerializer,
-    UserSerializer,
-    MeUserSerializer
-)
-from .utils import (
-    create_confirmation_code,
-    send_confirmation_code,
-    create_jwt_token
-)
+from .serializers import (GetTokenSerializer, MeUserSerializer,
+                          SignupSerializer, UserSerializer)
+from .utils import (create_confirmation_code, create_jwt_token,
+                    send_confirmation_code)
 
 
 class APISignup(APIView):

@@ -1,7 +1,7 @@
-from django.urls import path, include
+from django.urls import include, path
 from rest_framework.routers import DefaultRouter
 
-from .views import APISignup, APIGetToken, UserViewSet
+from .views import APIGetToken, APISignup, UserViewSet
 
 v1_router = DefaultRouter()
 v1_router.register(
