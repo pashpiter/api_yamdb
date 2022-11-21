@@ -60,7 +60,7 @@ class UserViewSet(ModelViewSet):
 
     def perform_create(self, serializer):
         if 'role' not in self.request.data:
-            serializer.save(self.request.user.is_user)
+            serializer.save(role='user')
         serializer.save()
 
     @action(
