@@ -80,13 +80,13 @@ POST http://127.0.0.1:8000/api/v1/titles/<title_id>/reviews/
 Получение списка всех комментариев к отзыву на произведение
 
 ```
-GET http://127.0.0.1:8000/api/v1/titles/<title_id>/reviews/comments/
+GET http://127.0.0.1:8000/api/v1/titles/<title_id>/reviews/<reviews_id>/comments/
 ```
 
 Добавление комментария к отзыву
 
 ```
-POST http://127.0.0.1:8000/api/v1/titles/<title_id>/reviews/comments/
+POST http://127.0.0.1:8000/api/v1/titles/<title_id>/reviews/<reviews_id>/comments/
     {
     "text": "string"
     }

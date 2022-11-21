@@ -64,9 +64,12 @@ class CommentViewSet(viewsets.ModelViewSet):
 
     def get_queryset(self):
         review = get_object_or_404(Review, id=self.kwargs.get('review_id'))
-        if review.title.id != self.kwargs['title_id']
+        if review.title.id == self.kwargs.get('title_id'):
             return review.comments.all()
+        return Exception('Ошибка получения произведения')
 
     def perform_create(self, serializer):
         review = get_object_or_404(Review, id=self.kwargs.get('review_id'))
-        serializer.save(author=self.request.user, review=review)
+        if review.title.id == self.kwargs.get('title_id'):
+            serializer.save(author=self.request.user, review=review)
+        return Exception('Ошибка получения произведения')
