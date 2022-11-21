@@ -9,11 +9,11 @@ from reviews.models import (Category, Comment, Genre, GenreTitle, Review,
 CSV_FILES = {
     User: 'users.csv',
     Category: 'category.csv',
-    Comment: 'comments.csv',
-    GenreTitle: 'genre_title.csv',
     Genre: 'genre.csv',
+    Title: 'titles.csv',
     Review: 'review.csv',
-    Title: 'titles.csv'
+    Comment: 'comments.csv'
+    # GenreTitle: 'genre_title.csv',
 }
 
 
@@ -26,4 +26,4 @@ class Command(BaseCommand):
                 encoding='utf-8'
             ) as csvfile:
                 for row in csv.DictReader(csvfile):
-                    model.objects.create(**dict(row))
+                    model.objects.get_or_create(**dict(row))
