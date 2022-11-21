@@ -1,14 +1,10 @@
-from random import randrange
-
+from django.contrib.auth.tokens import default_token_generator
 from django.core.mail import send_mail
 from rest_framework_simplejwt.tokens import RefreshToken
 
-MIN_CONFIRMATION_CODE = 10000
-MAX_CONFIRMATION_CODE = 100000
 
-
-def create_confirmation_code():
-    return str(randrange(MIN_CONFIRMATION_CODE, MAX_CONFIRMATION_CODE))
+def create_confirmation_code(user):
+    return default_token_generator.make_token(user)
 
 
 def send_confirmation_code(user):

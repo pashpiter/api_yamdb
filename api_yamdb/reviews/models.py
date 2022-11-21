@@ -1,68 +1,8 @@
-from django.contrib.auth.models import AbstractUser
-from django.contrib.auth.validators import UnicodeUsernameValidator
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
 
+from users.models import User
 from .validators import validate_title_year
-
-USER_ROLE = 'user'
-MODERATOR_ROLE = 'moderator'
-ADMIN_ROLE = 'admin'
-
-CHOICES_ROLE = (
-    (USER_ROLE, 'user'),
-    (MODERATOR_ROLE, 'moderator'),
-    (ADMIN_ROLE, 'admin')
-)
-
-
-class User(AbstractUser):
-    username = models.CharField(
-        max_length=150,
-        unique=True,
-        validators=(UnicodeUsernameValidator(),)
-    )
-    email = models.EmailField(
-        'Электронная почта',
-        max_length=254,
-        unique=True
-    )
-    first_name = models.CharField(
-        'Имя',
-        max_length=150,
-        blank=True
-    )
-    last_name = models.CharField(
-        'Фамилия',
-        max_length=150,
-        blank=True
-    )
-    bio = models.TextField(
-        'Биография',
-        blank=True
-    )
-    role = models.CharField(
-        'Роль',
-        max_length=16,
-        choices=CHOICES_ROLE,
-        default=USER_ROLE,
-        blank=True,
-        null=True
-    )
-    confirmation_code = models.CharField(
-        'Код подтверждения',
-        max_length=5,
-        blank=True,
-        null=True
-    )
-
-    class Meta:
-        ordering = ('id',)
-        verbose_name = 'Пользователь'
-        verbose_name_plural = 'Пользователи'
-
-    def __str__(self):
-        return f'{self.username}'
 
 
 class Category(models.Model):
@@ -77,6 +17,7 @@ class Category(models.Model):
     )
 
     class Meta:
+        ordering = ('slug',)
         verbose_name = 'Категория'
         verbose_name_plural = 'Категории'
 
@@ -96,6 +37,7 @@ class Genre(models.Model):
     )
 
     class Meta:
+        ordering = ('slug',)
         verbose_name = 'Жанр'
         verbose_name_plural = 'Жанры'
 
@@ -108,11 +50,12 @@ class Title(models.Model):
         'Название произведения',
         max_length=200
     )
-    year = models.IntegerField(
+    year = models.PositiveIntegerField(
         'Год выпуска',
         validators=(validate_title_year,),
         null=True,
-        blank=True
+        blank=True,
+        db_index=True
     )
     description = models.TextField(
         'Описание произведения',
@@ -135,6 +78,7 @@ class Title(models.Model):
     )
 
     class Meta:
+        ordering = ('name',)
         verbose_name = 'Произведение'
         verbose_name_plural = 'Произведения'
 
@@ -157,7 +101,7 @@ class Review(models.Model):
         related_name='reviews'
     )
     text = models.TextField()
-    score = models.IntegerField(
+    score = models.PositiveIntegerField(
         validators=[MinValueValidator(1), MaxValueValidator(10)]
     )
     author = models.ForeignKey(
