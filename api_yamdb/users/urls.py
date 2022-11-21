@@ -10,8 +10,12 @@ v1_router.register(
     basename='users'
 )
 
+urlauth = [
+    path('auth/signup/', APISignup.as_view(), name='signup'),
+    path('auth/token/', APIGetToken.as_view(), name='get_token')
+]
+
 urlpatterns = [
     path('v1/', include(v1_router.urls)),
-    path('v1/auth/signup/', APISignup.as_view(), name='signup'),
-    path('v1/auth/token/', APIGetToken.as_view(), name='get_token')
+    path('v1/', include(urlauth))
 ]
