@@ -1,5 +1,7 @@
 from rest_framework.permissions import SAFE_METHODS, BasePermission
 
+from reviews.models import ADMIN_ROLE, MODERATOR_ROLE
+
 
 class IsAdminOrReadOnly(BasePermission):
     def has_permission(self, request, view):
