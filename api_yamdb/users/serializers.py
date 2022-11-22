@@ -19,7 +19,7 @@ class SignupSerializer(serializers.ModelSerializer):
                 f'username {value} уже используется'
             )
         return value
-    
+
     def validate_email(self, value):
         if User.objects.filter(email=value).exists():
             raise serializers.ValidationError(
