@@ -9,7 +9,7 @@ from rest_framework.status import HTTP_200_OK, HTTP_400_BAD_REQUEST
 from rest_framework.views import APIView
 from rest_framework.viewsets import ModelViewSet
 
-from reviews.models import User
+from .models import User
 from .serializers import (GetTokenSerializer, MeUserSerializer,
                           SignupSerializer, UserSerializer)
 from .utils import (create_confirmation_code, create_jwt_token,
@@ -19,12 +19,11 @@ from .utils import (create_confirmation_code, create_jwt_token,
 class APISignup(APIView):
     def post(self, request):
         serializer = SignupSerializer(data=request.data)
-        if not serializer.is_valid():
-            return Response(serializer.errors, status=HTTP_400_BAD_REQUEST)
+        serializer.is_valid(raise_exception=True)
         username = serializer.validated_data.get('username')
         email = serializer.validated_data.get('email')
         try:
-            user, flag = User.objects.get_or_create(
+            user, _ = User.objects.get_or_create(
                 username=username,
                 email=email
             )
@@ -33,7 +32,7 @@ class APISignup(APIView):
                 (f'Ошибка создания нового пользователя {error}. '
                  'Данный username или email уже существует')
             )
-        user.confirmation_code = create_confirmation_code()
+        user.confirmation_code = create_confirmation_code(user)
         user.save()
         send_confirmation_code(user)
         return Response(serializer.validated_data, status=HTTP_200_OK)
@@ -42,14 +41,13 @@ class APISignup(APIView):
 class APIGetToken(APIView):
     def post(self, request):
         serializer = GetTokenSerializer(data=request.data)
-        if not serializer.is_valid():
-            return Response(serializer.errors, status=HTTP_400_BAD_REQUEST)
+        serializer.is_valid(raise_exception=True)
         username = serializer.validated_data['username']
         confirmation_code = serializer.validated_data['confirmation_code']
         user = get_object_or_404(User, username=username)
         if confirmation_code != user.confirmation_code:
             return Response(serializer.errors, status=HTTP_400_BAD_REQUEST)
-        return Response({"token": create_jwt_token(user)})
+        return Response({'token': create_jwt_token(user)})
 
 
 class UserViewSet(ModelViewSet):
@@ -75,7 +73,7 @@ class UserViewSet(ModelViewSet):
         user = get_object_or_404(User, username=self.request.user)
         serializer = UserSerializer(user)
         if request.method == 'PATCH':
-            if request.user.role == 'admin':
+            if request.user.is_admin:
                 serializer = UserSerializer(
                     user,
                     data=request.data,

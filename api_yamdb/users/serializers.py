@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from reviews.models import User
+from .models import User
 
 
 class SignupSerializer(serializers.ModelSerializer):
@@ -13,6 +13,17 @@ class SignupSerializer(serializers.ModelSerializer):
         if value == 'me':
             raise serializers.ValidationError(
                 'Использовать имя "me" в качестве username запрещено.'
+            )
+        if User.objects.filter(username=value).exists():
+            raise serializers.ValidationError(
+                f'username {value} уже используется'
+            )
+        return value
+
+    def validate_email(self, value):
+        if User.objects.filter(email=value).exists():
+            raise serializers.ValidationError(
+                f'email {value} уже используется'
             )
         return value
 
