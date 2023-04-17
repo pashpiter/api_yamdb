@@ -1,6 +1,4 @@
-# api_yamdb
-
-api_yamdb
+# api_yamdb project
 
 ## Авторы:
 **Команда 22** в составе:
